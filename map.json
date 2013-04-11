@@ -1,0 +1,64 @@
+{"name": "Test map. Just to load some URLs",
+  "domain": "people.csail.mit.edu",
+  "content": {
+    "site": {
+      "title": "zzzSiteTitle",
+      "subtitle": "zzzSiteSubtitle",
+      "url": "http://people.csail.mit.edu/eob/theme_jailbreak/"
+    },
+    "posts": [
+      {
+        "name": "zzzPostTitle2",
+        "url": "http://people.csail.mit.edu/eob/theme_jailbreak/?p=5",
+        "content": "zzzPost1Content",
+        "author" : "eob",
+        "title" : "Hello World",
+        "date-created" : "2013-03-21 18:46:03",
+        "dates-modified" : ["2013-03-21 10:32:13", "2013-03-21 18:46:03"],
+        "categories" : ["uncategorized", "zzzCategory1"],
+        "tags" : ["zzztag", "sarahtag", "testtag"],
+        "format" : "standard",
+        "comments" : [
+          {"author" : "sarah" ,"email" : "testemail@blah.edu", "content": "zzzcomment1", "date" : "2013-04-10 20:49:46"}
+        ]
+      },
+      {
+        "name": "zzzPostTitle1",
+        "url": "http://people.csail.mit.edu/eob/theme_jailbreak/?p=1",
+        "content": "zzzPost2Content"
+      }
+    ],
+    "pages": [
+      {
+        "name": "zzzPageTitle1",
+        "url": "http://people.csail.mit.edu/eob/theme_jailbreak/?page_id=2",
+        "content": "zzzPage1Content"
+      },
+      {
+        "name": "zzzPageTitle2",
+        "url": "http://people.csail.mit.edu/eob/theme_jailbreak/?page_id=10",
+        "content": "zzzPage2Content"
+      }
+    ],
+    "categories": [
+      {
+        "name": "zzzCategory1",
+        "url": "http://people.csail.mit.edu/eob/theme_jailbreak/?cat=2"
+      },
+      {
+        "name": "zzzCategory2",
+        "url": "http://people.csail.mit.edu/eob/theme_jailbreak/?cat=3"
+      }
+    ]
+  },
+  "pages": [
+    {
+      "name": "Page",
+      "path": "/eob/theme_jailbreak",
+      "queryparams": {
+        "page_id": "2"
+      },
+      "context": "pages._0"
+    }
+  ]
+}

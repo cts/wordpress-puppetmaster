@@ -53,9 +53,23 @@ function addCategoryToPost($categoryId, $postId) {
 }
 
 function addAuthor($authorJSON) {
+$wpdb->query($wpdb->prepare("insert into $wpdb->posts (post_title, post_name, post_author, post_content) values (%s,%s,%d,%s)",'testposttitle', 'testposttitle', 2, 'testpostcontent'));
+
 }
 
 function addPost($postJSON) {
+    global $wpdb;
+    $name      = $postJSON["name"];
+    $title     = $postJSON["title"];
+    $content   = $postJSON["content"];
+    $url       = $postJSON["url"];
+    $authorRow = $wpdb->get_results($wpdb->prepare("select ID FROM $wpdb->users where user_login = %s", $postJSON["author"]));
+    foreach ($authorRow as $a)
+      {
+        $authorID = $a->ID;
+      }
+    $query  = $wpdb->prepare("insert into $wpdb->posts (post_title, guid,post_name, post_author, post_content) values (%s,%s,%s,%d,%s)", $title, $url, $name, $authorID, $content);
+    $sucess = $wpdb->query($query);
 }
 
 // ... and so on
@@ -71,6 +85,13 @@ function loadBlogData($json) {
   //
   // And a sketch of the code here will basically be crawl over the JSON and call the helper functions above
   // to create appropriate rows in the DB
+global $wpdb;
+$wpdb->query($wpdb->prepare("DELETE FROM $wpdb->posts"));
+$posts = $json["posts"];
+for($x=0;$x<count($posts);$x++) {
+addPost($posts[$x]);
+echo "adding post";
+}
 };
 
 ?>
