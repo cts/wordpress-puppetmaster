@@ -10,11 +10,15 @@ Author URI: http://haystack.csail.mit.edu/
 
 include_once('database-utils.php');
 
+// Turn on error reporting
+ini_set('display_errors', 1);
+error_reporting(~0);
+
 function puppetmaster() {
   if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if ((isset $_POST['resetblog']) && ($_POST['resetblog'] == '1')) {
+    if ((isset($_POST['resetblog'])) && ($_POST['resetblog'] == '1')) {
       resetDatabase();
-      if ((isset $_POST['newdata'])) {
+      if (isset($_POST['newdata'])) {
         $json = json_decode($_POST['newdata']);
         loadBlogData($json);
       }
