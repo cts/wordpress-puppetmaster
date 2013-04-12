@@ -63,6 +63,7 @@ function addPost($postJSON) {
     $title     = $postJSON["title"];
     $content   = $postJSON["content"];
     $url       = $postJSON["url"];
+    echo "adding a post";
     $authorRow = $wpdb->get_results($wpdb->prepare("select ID FROM $wpdb->users where user_login = %s", $postJSON["author"]));
     foreach ($authorRow as $a)
       {
@@ -86,6 +87,7 @@ function loadBlogData($json) {
   // And a sketch of the code here will basically be crawl over the JSON and call the helper functions above
   // to create appropriate rows in the DB
 global $wpdb;
+echo "loading data";
 $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->posts"));
 $posts = $json["posts"];
 for($x=0;$x<count($posts);$x++) {

@@ -10,8 +10,11 @@ Author URI: http://haystack.csail.mit.edu/
 
 include_once('database-utils.php');
 
+// Turn on error reporting
+ini_set('display_errors', 1);
+error_reporting(~0);
+
 function puppetmaster() {
-  echo 'in top';
 $string = '{"posts": [
       {
         "name": "zzzPostTitle2",
@@ -29,18 +32,19 @@ $string = '{"posts": [
         ]
       }]}';
  $json = json_decode($string, true);
-        loadBlogData($json);
-echo 'loaded';
+//        loadBlogData($json);
   if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-   // if ((isset $_POST['resetblog']) && ($_POST['resetblog'] == '1')) {
-     // resetDatabase();
-     // if ((isset $_POST['newdata'])) {
-      //  $json = json_decode($_POST['newdata']);
-        $json = json_decode('map.json');
+   echo "request is post";
+    if ((isset($_POST['resetblog'])) && ($_POST['resetblog'] == '1')) {
+    //  resetDatabase();
+echo "restblog set";      
+if (isset($_POST['newdata'])) {
+        $json = json_decode($_POST['newdata']);
         loadBlogData($json);
-      //}
-  echo 'in puppet master down';
-  //  }
+echo "json:";
+echo $json;
+      }
+    }
   }
 }
 
