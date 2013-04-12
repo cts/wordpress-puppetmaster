@@ -89,7 +89,7 @@ function loadBlogData($json) {
 global $wpdb;
 echo "loading data";
 $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->posts"));
-$posts = $json["posts"];
+$posts = $json["content"]["posts"];
 for($x=0;$x<count($posts);$x++) {
 addPost($posts[$x]);
 echo "adding post";
