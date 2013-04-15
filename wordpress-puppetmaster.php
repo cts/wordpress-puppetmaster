@@ -20,7 +20,7 @@ function puppetmaster()
       {
         if ((isset($_POST['resetblog'])) && ($_POST['resetblog'] == '1'))
           {
-            //  resetDatabase();
+              resetDatabase();
             if (isset($_POST['newdata']))
               {
                 // $json = json_decode(file_get_contents($_POST['newdata'], true));

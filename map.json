@@ -11,7 +11,7 @@
         "name": "zzzPostTitle2",
         "url": "http://people.csail.mit.edu/eob/theme_jailbreak/?p=5",
         "content": "zzzPost1Content",
-        "author" : "eob",
+        "author" : "sarah",
         "title" : "from the map",
         "date-created" : "2013-03-21 18:46:03",
         "dates-modified" : ["2013-03-21 10:32:13", "2013-03-21 18:46:03"],
@@ -21,11 +21,6 @@
         "comments" : [
           {"author" : "sarah" ,"email" : "testemail@blah.edu", "content": "zzzcomment1", "date" : "2013-04-10 20:49:46"}
         ]
-      },
-      {
-        "name": "zzzPostTitle1",
-        "url": "http://people.csail.mit.edu/eob/theme_jailbreak/?p=1",
-        "content": "zzzPost2Content"
       }
     ],
     "pages": [

@@ -4,7 +4,7 @@
 global $wpdb;
 
 // These are the tables in the WP Database.
-$USER_TABLES = array(
+/**$USER_TABLES = array(
   'wp_commenta',
   'wp_comments',
   'wp_links',
@@ -15,6 +15,17 @@ $USER_TABLES = array(
   'wp_terms',
   'wp_usermeta', // Note: this one is tricky: we'll have to pay careful attention at how it coordinates with wp_users
   'wp_users'
+);
+*/
+$USER_TABLES = array(
+  $wpdb->posts,
+  $wpdb->postmeta,
+  $wpdb->comments,
+  $wpdb->commentmeta,
+  $wpdb->links,
+  $wpdb->term_relationships,
+  $wpdb->term_taxonomy,
+  $wpdb->terms,
 );
 
 // Note: we don't want to blow away these tables. But we will need to take care to carefully set
@@ -28,33 +39,77 @@ $OPTIONS_TABLES = array(
  */
 function resetDatabase() {
   $tables = array('table1', 'table2');
-  foreach ($TABLES as $table) {
-    $sql = "DELETE FROM $table;";
+  global $USER_TABLES; 
+  global $wpdb;
+  foreach ($USER_TABLES as $table) {
+    $sql = $wpdb->prepare("DELETE FROM $table");
     $wpdb->query($sql);
   }
 };
 
 function getOrAddTagID($tagName) {
   // adds to wp_term_taxonomy if not already there
-  // returns tagID
+   global $wpdb;
+  $query = $wpdb->prepare("select $wpdb->term_taxonomy.term_taxonomy_id from $wpdb->term_taxonomy inner join $wpdb->terms on $wpdb->terms.term_id = $wpdb->term_taxonomy.term_id where $wpdb->term_taxonomy.taxonomy=%s and $wpdb->terms.name=%s","post_tag", $tagName);
+  $id = $wpdb->get_row($query,ARRAY_N);
+  if (count($id) > 0) {
+    return $id[0];
+  } 
+  else {
+    $wpdb->insert($wpdb->terms, array('name' =>$tagName, 'slug'=>$tagName),array('%s', '%s'));
+    $newID=$wpdb->insert_id; 
+    $wpdb->insert($wpdb->term_taxonomy, array('term_id' =>$newID, 'taxonomy'=>'post_tag'),array('%d', '%s'));
+    return $wpdb->insert_id;
+   }
 }
 
 function getOrAddCategoryID($categoryName) {
+  global $wpdb;
   // adds to wp_tern_taxonomy if not already there
   // returns tagID
+//select wp_terms.term_id, wp_terms.name, wp_term_taxonomy.taxonomy
+//from wp_terms
+//inner join wp_term_taxonomy on wp_terms.term_id=wp_term_taxonomy.term_id
+//where wp_term_taxonomy.taxonomy="category" and wp_terms.name="Uncategorized"
+  $query = $wpdb->prepare("select $wpdb->term_taxonomy.term_taxonomy_id from $wpdb->term_taxonomy inner join $wpdb->terms on $wpdb->terms.term_id = $wpdb->term_taxonomy.term_id where $wpdb->term_taxonomy.taxonomy=%s and $wpdb->terms.name=%s","category", $categoryName);
+  //$query = $wpdb->prepare("select $wpdb->terms.term_id from $wpdb->terms inner join $wpdb->term_taxonomy on $wpdb->terms.term_id = $wpdb->term_taxonomy.term_id");
+  $id = $wpdb->get_row($query,ARRAY_N);
+  if (count($id) > 0) {
+    return $id[0];
+  } 
+  else {
+    $wpdb->insert($wpdb->terms, array('name' =>$categoryName, 'slug'=>$categoryName),array('%s', '%s'));
+    $newID=$wpdb->insert_id;
+   
+    if ($newID) {
+      $wpdb->insert($wpdb->term_taxonomy, array('term_id' =>$newID, 'taxonomy'=>'category'),array('%d', '%s'));
+      return $wpdb->insert_id;
+    }
+    else {
+      echo "returning null \n";
+      return null;
+    }
+   }
 }
 
 function addTagToPost($tagId, $postId) {
   // adds to wp_term_relationships
+  global $wpdb;
+  $wpdb->insert($wpdb->term_relationships, array('object_id'=>$postId,'term_taxonomy_id'=>$tagId), array('%d','%d'));
+  echo '\n insert id: '.$wpdb->insert_id;
+  $query = $wpdb->query($wpdb->prepare('update $wpdb->term_taxonomy set count = count+1 where term_taxonomy_id=%d',$tagId));
 }
 
 function addCategoryToPost($categoryId, $postId) {
   // adds to wp_term_relationships
+  global $wpdb;
+  $wpdb->insert($wpdb->term_relationships, array('object_id'=>$postId,'term_taxonomy_id'=>$categoryId), array('%d','%d'));
+  echo '\n insert id: '.$wpdb->insert_id;
+  $query = $wpdb->query($wpdb->prepare('update $wpdb->term_taxonomy set count = count+1 where term_taxonomy_id=%d',$categoryId));
 }
 
 function addAuthor($authorJSON) {
-$wpdb->query($wpdb->prepare("insert into $wpdb->posts (post_title, post_name, post_author, post_content) values (%s,%s,%d,%s)",'testposttitle', 'testposttitle', 2, 'testpostcontent'));
-
+  $wpdb->query($wpdb->prepare("insert into $wpdb->posts (post_title, post_name, post_author, post_content) values (%s,%s,%d,%s)",'testposttitle', 'testposttitle', 2, 'testpostcontent'));
 }
 
 function addPost($postJSON) {
@@ -63,14 +118,34 @@ function addPost($postJSON) {
     $title     = $postJSON["title"];
     $content   = $postJSON["content"];
     $url       = $postJSON["url"];
-    echo "adding a post";
+    $date       = $postJSON["date-created"];
+    $format    = $postJSON["format"];
+    $tags    = $postJSON["tags"];
+    $categories    = $postJSON["categories"];
+    $comments    = $postJSON["comments"];
+    
     $authorRow = $wpdb->get_results($wpdb->prepare("select ID FROM $wpdb->users where user_login = %s", $postJSON["author"]));
     foreach ($authorRow as $a)
       {
         $authorID = $a->ID;
       }
     $query  = $wpdb->prepare("insert into $wpdb->posts (post_title, guid,post_name, post_author, post_content) values (%s,%s,%s,%d,%s)", $title, $url, $name, $authorID, $content);
-    $sucess = $wpdb->query($query);
+    $wpdb->query($query);
+    $postID=$wpdb->insert_id;  
+    for ($i=0;$i<count($categories);$i++) {
+      $categoryID = getOrAddCategoryID($categories[$i]);
+      echo '\n CATEGORY ID: '.$categoryID;
+      echo '\n and post id: '.$postID;
+      addCategorytoPost($categoryID, $postID);
+    } 
+    for ($g=0;$g<count($tags);$g++) {
+      $tagID = getOrAddTagID($tags[$g]);
+      echo '\n TAG ID: '.$tagID;
+      echo '\n and post id: '.$postID;
+      addTagtoPost($tagID, $postID);
+    } 
+
+
 }
 
 // ... and so on
@@ -86,14 +161,11 @@ function loadBlogData($json) {
   //
   // And a sketch of the code here will basically be crawl over the JSON and call the helper functions above
   // to create appropriate rows in the DB
-global $wpdb;
-echo "loading data";
-$wpdb->query($wpdb->prepare("DELETE FROM $wpdb->posts"));
-$posts = $json["content"]["posts"];
-for($x=0;$x<count($posts);$x++) {
-addPost($posts[$x]);
-echo "adding post";
-}
+  global $wpdb;
+  $posts = $json["content"]["posts"];
+  for($x=0;$x<count($posts);$x++) {
+    addPost($posts[$x]);
+  }
 };
 
 ?>
