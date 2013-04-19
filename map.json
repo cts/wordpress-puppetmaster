@@ -1,5 +1,6 @@
 {"name": "Test map. Just to load some URLs",
   "domain": "people.csail.mit.edu",
+  "author" : {"name" : "sarah", "email" : "sscodel@mit.edu"},
   "content": {
     "site": {
       "title": "zzzSiteTitle",
@@ -13,8 +14,7 @@
         "content": "zzzPost1Content",
         "author" : "sarah",
         "title" : "from the map",
-        "date-created" : "2013-03-21 18:46:03",
-        "dates-modified" : ["2013-03-21 10:32:13", "2013-03-21 18:46:03"],
+        "date_created" : "2013-03-21 18:46:03",
         "categories" : ["uncategorized", "zzzCategory1"],
         "tags" : ["zzztag", "sarahtag", "testtag"],
         "format" : "standard",
@@ -25,35 +25,20 @@
     ],
     "pages": [
       {
-        "name": "zzzPageTitle1",
+        "title": "zzzPageTitle1",
         "url": "http://people.csail.mit.edu/eob/theme_jailbreak/?page_id=2",
-        "content": "zzzPage1Content"
+        "content": "zzzPage1Content",
+        "author" : "sarah",
+        "comments" : []
       },
       {
-        "name": "zzzPageTitle2",
+        "title": "zzzPageTitle2",
         "url": "http://people.csail.mit.edu/eob/theme_jailbreak/?page_id=10",
-        "content": "zzzPage2Content"
+        "content": "zzzPage2Content",
+        "author" : "sarah",
+        "comments" : []
       }
     ],
-    "categories": [
-      {
-        "name": "zzzCategory1",
-        "url": "http://people.csail.mit.edu/eob/theme_jailbreak/?cat=2"
-      },
-      {
-        "name": "zzzCategory2",
-        "url": "http://people.csail.mit.edu/eob/theme_jailbreak/?cat=3"
-      }
-    ]
-  },
-  "pages": [
-    {
-      "name": "Page",
-      "path": "/eob/theme_jailbreak",
-      "queryparams": {
-        "page_id": "2"
-      },
-      "context": "pages._0"
-    }
-  ]
+    "categories": ["zzzCategory1", "zzzCategory2", "zzzCategory3", "zzzCategory4"]
+  }
 }
